@@ -13,7 +13,7 @@ stored as parquet
 ;
 EOS
 
-  row_format = "  %{name} %{type} comment '%{comment}',"
+  row_format = "  %{name} %{type} comment \"%{comment}\","
 
   rows = (2..ws.num_rows).map { |r|
     row_format % { 
@@ -32,7 +32,7 @@ insert into %{table}
 partition (year = ${hiveconf:year}, month = ${hiveconf:month}, day = ${hiveconf:day}, hour = ${hiveconf:hour})
 select 
   %{selects}
-  from_unixtime(nginx_time_stamp, 'm'), from_unixtime(nginx_time_stamp, 's')
+  from_unixtime(nginx_time_stamp, "m"), from_unixtime(nginx_time_stamp, "s")
 from %{raw_table}
 lateral view json_tuple(json_data,
   %{columns_dq}
@@ -46,7 +46,7 @@ EOS
   return format % {
     selects:    (2..ws.num_rows).map{|r|ws[r,4] + ","}.join,
     columns:    columns_list.join(",") + ",",
-    columns_dq: columns_list.map{|c|"'%s'" % c}.join(",") + ",",
+    columns_dq: columns_list.map{|c|"\"%s\"" % c}.join(",") + ",",
     table:      table_name,
     raw_table:  raw_table_name,
   }
@@ -62,7 +62,7 @@ def build_raw_table_name(log_name)
 end
 
 def update_page(confluence, page_id, content)
-  confluence.execute(a: 'storePage', id: page_id, content: "\"#{content}\"")
+  confluence.execute(a: 'storePage', id: page_id, content: "'#{content}'")
 end
 
 def fetch_metadata_list(spreadsheet)
