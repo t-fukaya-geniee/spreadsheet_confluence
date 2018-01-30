@@ -93,4 +93,11 @@ end
 session = GoogleDrive::Session.from_config("google_drive_config.json")
 spreadsheet = session.file_by_id('1FVu3LahWtaW2nFoyn61ooJY8bqpb60SFXOnJDjwCwOI')
 confluence = Confluence.new
-fetch_metadata_list(spreadsheet).each{|m|update_page_by_metadata(confluence, spreadsheet, m)}
+metadata_list = []
+if ARGV.size == 0 then
+  metadata_list = fetch_metadata_list(spreadsheet)
+else
+  metadata_list = fetch_metadata_list(spreadsheet).select{|m|ARGV.include?(m[:log_name])}
+end
+metadata_list.each{|m|update_page_by_metadata(confluence, spreadsheet, m)}
+
