@@ -45,8 +45,8 @@ EOS
 
   return format % {
     selects:    (2..ws.num_rows).map{|r|ws[r,4] + ","}.join,
-    columns:    columns_list.join(",") + ",",
-    columns_dq: columns_list.map{|c|"\"%s\"" % c}.join(",") + ",",
+    columns:    columns_list.join(","),
+    columns_dq: columns_list.map{|c|"\"%s\"" % c}.join(","),
     table:      table_name,
     raw_table:  raw_table_name,
   }
